@@ -54,7 +54,7 @@ def thread_detail(request, board_code, post_id):
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.thread = thread
-            if form.cleaned_data['email'] == 'sage' or len(posts) > 500:
+            if (form.cleaned_data['email'] == 'sage') or len(posts) > 500:
                 new_post.bump = False
             new_post.ip = request.META.get('REMOTE_ADDR')
             new_post.save()
@@ -131,7 +131,6 @@ class PostList(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostDetail(APIView):
@@ -149,12 +148,11 @@ class PostDetail(APIView):
     def put(self, request, pk, format=None):
         post = self.get_object(pk)
         diff = post.published - datetime.datetime.now()
-        if request.META.get('REMOTE_ADDR') == post.ip and diff.seconds <= 120:
+        if (request.META.get('REMOTE_ADDR') == post.ip) and diff.seconds <= 120:
             serializer = PostSerializer(post, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         post = self.get_object(pk)
