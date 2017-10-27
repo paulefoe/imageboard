@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добро пожаловать снова</title>
+</head>
+<body>
+    {% for li in posts %}
+        {% for post in li %}
+            {% if post.op == True %}
+                {% if user.is_superuser %}
+                    {{ post.ip }}
+                    <a href="{% url 'delete_post' board_code=board_code post_id=post.id %}">
+                        Delete
+                        </a>
+                    {% endif %}
+                {% if post.image %}
+                        <img src="{{ post.image.url }}">
+                    {% endif %}
+                <p style="color: red"> {{ post.title }}</p>
+                <a href="{% url 'thread_detail' board_code post.id %}"> {{ post.id }}</a><br><br>
+                {{ post.text }}
+                <br><br><br><br><br><br>
+            {% else %}
+                {% if user.is_superuser %}
+                    {{ post.ip }}
+                    <a href="{% url 'delete_post' board_code=board_code post_id=post.id %}">
+                        Delete
+                        </a>
+                    {% endif %}
+                {% if post.image %}
+                        <img src="{{ post.image.url }}">
+                    {% endif %}
+                {{ post.title }}
+                {{ post.id }}<br>
+                {{ post.text }}<br><br><br><br>
+            {% endif %}
+        {% endfor %}
+
+
+    {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}">previous</a>
+            {% endif %}
+
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">next</a>
+        {% endif %}
+        </span>
+    </div>
+<br>
+
+
+
+</body>
+</html>

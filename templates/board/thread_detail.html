@@ -1,0 +1,77 @@
+{% extends 'board/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+    {% block title %}Detail{% endblock %}
+
+
+{% block content %}
+
+    {% for post in posts %}
+        {% if post.op == True %}
+            <div id="post">
+            <div id="post_zhopa">
+            {% if post.image %}
+                        <img src="{{ post.image.url }}">
+                    {% endif %}
+            <p style="color: aqua"> {{ post.title }}<br> {% if user.is_superuser %}
+                    {{ post.ip }}
+                    <a href="{% url 'delete_post' board_code=board_code post_id=post.id %}">
+                        Delete
+                        </a>
+
+                    {% endif %}
+            {{ post.text }}<br><br><br><br><br>
+            </p>
+            {% else %}
+                <p>{{ post.title }} {% if user.is_superuser %}
+                    {{ post.ip }}
+                    <a href="{% url 'delete_post' board_code=board_code post_id=post.id %}">
+                        Delete
+                        </a>
+
+
+
+                    {% endif %}
+                {% if post.image %}
+                        <img src="{{ post.image.url }}">
+                    {% endif %}
+                {{ post.id }}</p><br>
+                <p>{{ post.text }}</p><br><br>
+        {% endif %}
+    {% endfor %}
+    </div>
+    </div>
+
+
+
+ <form id="form_post" class="text-center" class="form-post" enctype="multipart/form-data" action="." method="post">
+ {{ form|crispy }}
+ {% csrf_token %}
+ <p><input type="submit" value="Отправить"></p>
+ </form>
+
+
+
+
+<script type="text/javascript">
+    var frm = $('#form_post');
+    var post = $('lol');
+    frm.submit(function () {
+        $.ajax({
+            type: frm.attr('method'),
+             url: frm.attr('thread_detail'),
+{#            url: frm.attr({% url 'thread_detail' board_code=board_code post_id=post_id %}),#}
+            data: frm.serialize(),
+            success: function (data) {
+                console.log(post);
+{#                $("#post").html(post.serialize()[0].val());#}
+
+            },
+            error: function(data) {
+                $("#MESSAGE-DIV").html("Something went wrong!");
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

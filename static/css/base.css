@@ -1,0 +1,31 @@
+*{
+    background-color: #2C2C2C;
+    box-sizing: border-box;
+}
+.nav-link {
+    color: #C9BE89;
+}
+#post{
+    background-color: #2C2C2C;
+    color: #698CC0;
+}
+.form-post{
+    position: relative;
+}
+
+label.control-label{
+    color: white;
+}
+
+#id_email, #id_name, #id_title, #id_text, #id_image{
+    background-color: black;
+    border: solid 2px #575757;
+    width: 845px;
+    margin: 0;
+    color: #EEEEEE;
+    display: inline-block;
+    padding: 3px !important;
+    min-width: 275px !important;
+    resize: both;
+    transition: none !important;
+}

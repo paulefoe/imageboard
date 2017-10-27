@@ -1,0 +1,10 @@
+{% extends 'board/base.html' %}
+{% load static %}
+    {% block title %}НАЙСУ{% endblock %}
+{% block content %}
+
+
+    {% for board in boards %}
+        <a href="{% url 'thread_list' board.code %}">{{ board.code }}</a>
+    {% endfor %}
+{% endblock %}
