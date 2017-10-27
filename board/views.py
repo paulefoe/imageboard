@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse, redirect, Http404
 from .models import Post, Thread, Board
 import json
+import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -53,7 +54,7 @@ def thread_detail(request, board_code, post_id):
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.thread = thread
-            if form.cleaned_data['email'] == 'sage':
+            if form.cleaned_data['email'] == 'sage' or len(posts) > 500:
                 new_post.bump = False
             new_post.ip = request.META.get('REMOTE_ADDR')
             new_post.save()
@@ -147,12 +148,13 @@ class PostDetail(APIView):
 
     def put(self, request, pk, format=None):
         post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data)
-        print(request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        diff = post.published - datetime.datetime.now()
+        if request.META.get('REMOTE_ADDR') == post.ip and diff.seconds <= 120:
+            serializer = PostSerializer(post, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         post = self.get_object(pk)
