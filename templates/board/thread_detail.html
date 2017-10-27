@@ -9,7 +9,6 @@
     {% for post in posts %}
         {% if post.op == True %}
             <div id="post">
-            <div id="post_zhopa">
             {% if post.image %}
                         <img src="{{ post.image.url }}">
                     {% endif %}
@@ -40,7 +39,6 @@
         {% endif %}
     {% endfor %}
     </div>
-    </div>
 
 
 
@@ -64,7 +62,7 @@
             data: frm.serialize(),
             success: function (data) {
                 console.log(post);
-{#                $("#post").html(post.serialize()[0].val());#}
+                $("#post").html(data);
 
             },
             error: function(data) {

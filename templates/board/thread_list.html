@@ -1,14 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Добро пожаловать снова</title>
-</head>
-<body>
+{% extends 'board/base.html' %}
+
+{% block title %}
+    {{ board_code }}
+{% endblock %}
+{% block content %}
+
     {% for li in posts %}
         {% for post in li %}
+             <div id="post">
             {% if post.op == True %}
                 {% if user.is_superuser %}
+
                     {{ post.ip }}
                     <a href="{% url 'delete_post' board_code=board_code post_id=post.id %}">
                         Delete
@@ -34,6 +36,7 @@
                 {{ post.title }}
                 {{ post.id }}<br>
                 {{ post.text }}<br><br><br><br>
+ </div>
             {% endif %}
         {% endfor %}
 
@@ -56,6 +59,4 @@
 <br>
 
 
-
-</body>
-</html>
+{% endblock %}
