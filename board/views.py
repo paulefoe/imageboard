@@ -11,8 +11,10 @@ from django.template.loader import get_template
 from django.http import JsonResponse
 from .forms import PostForm, OpForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .serializers import PostSerializer
+from .serializers import PostSerializer, BlacklistPermission
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.routers import Route, DynamicDetailRoute, SimpleRouter
+
 
 
 def index(request):
@@ -49,8 +51,8 @@ def thread_detail(request, board_code, post_id):
     thread = get_object_or_404(Thread, id=post.thread_id)
     board = get_object_or_404(Board, code=board_code)
     posts = Post.objects.filter(board__code=board_code, thread_id=post.thread_id)[::-1]
-    lol = serializers.serialize('json', posts)
-    response = JsonResponse(lol, safe=False)
+#     lol = serializers.serialize('json', posts)
+#     response = JsonResponse(lol, safe=False)
     # if request.method == 'POST':
     #     form = PostForm(request.POST, request.FILES)
     #     if form.is_valid():
@@ -136,6 +138,8 @@ class PostList(APIView):
 
 
 class PostDetail(APIView):
+    permission_classes = [BlacklistPermission, IsAuthenticatedOrReadOnly]
+
     def get_object(self, pk):
         try:
             return Post.objects.get(pk=pk)
@@ -148,9 +152,10 @@ class PostDetail(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
+
         post = self.get_object(pk)
-        diff = post.published - datetime.datetime.now()
-        if (request.META.get('REMOTE_ADDR') == post.ip) and diff.seconds <= 120:
+        # diff = post.published - datetime.datetime.now()
+        if self.check_object_permissions(request, post):
             serializer = PostSerializer(post, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -185,3 +190,9 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+    # @list_route(methods=['get'], url_name='detail_thread')
+    # def detail_thread(self, request, board_code, post_id):
+    #     post = get_object_or_404(Post, id=post_id)
+    #     posts = Post.objects.filter(board__code=board_code, thread_id=post.thread_id)[::-1]
+    #     serializer = self.get_serializer(posts, many=True)
+    #     return Response(serializer.data)

@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^post/(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),
     url(r'^posts/', views.PostList.as_view()),
     url(r'^test/(?P<board_code>\w{1,2})/(?P<post_id>\d+)/$', views.PostViewSet.as_view({'post': 'create'}), name='test'),
+    # url(r'^test/(?P<board_code>\w{1,2})/(?P<post_id>\d+)/$', views.PostViewSet.as_view({'get': 'list'}), name='test_list'),
     url(r'^$', views.index, name='index'),
 ]
 
