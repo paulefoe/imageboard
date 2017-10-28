@@ -50,22 +50,22 @@
 
 
 
-
 <script type="text/javascript">
     var frm = $('#form_post');
-    var post = $('lol');
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
-             url: frm.attr('thread_detail'),
-{#            url: frm.attr({% url 'thread_detail' board_code=board_code post_id=post_id %}),#}
+             url: frm.attr('test'),
+{#            url: frm.attr({% url 'test' board_code=board_code post_id=post_id %}),#}
+{#            url: frm.attr('test/{{ board_code }}/{{ post_id }}/'),#}
             data: frm.serialize(),
             success: function (data) {
-                console.log(post);
+                console.log(data);
                 $("#post").html(data);
 
             },
             error: function(data) {
+{#                console.log(data);#}
                 $("#MESSAGE-DIV").html("Something went wrong!");
             }
         });
