@@ -89,7 +89,7 @@ def thread_detail(request, board_code, post_id):
     # else:
     form = PostForm()
     return render(request, 'board/thread_detail.html', {'posts': posts, 'form': form, 'board_code': board_code,
-                                                            'post_id': post_id, 'lol': lol})
+                                                        'post_id': post_id})
 
 
 def create_thread(request, board_code):
@@ -177,12 +177,10 @@ class PostViewSet(viewsets.ModelViewSet):
         thread = get_object_or_404(Thread, id=op_post.thread_id)
         board = get_object_or_404(Board, code=board_code)
         posts = Post.objects.filter(board__code=board_code, thread_id=op_post.thread_id)[::-1]
-
-        # Вот это кажется очень глупым, но без него is_valid() будет false
-        request.data['thread'] = thread.id
-        request.data['board'] = [board.id]
-        request.data['ip'] = request.META.get('REMOTE_ADDR')
         serializer = PostSerializer(data=request.data)
+        serializer.data['thread'] = thread.id
+        serializer.data['board'] = [board.id]
+        serializer.data['ip'] = request.META.get('REMOTE_ADDR')
         if serializer.is_valid():
             if (serializer.validate_data['email'] == 'sage') or len(posts) > 500:
                 serializer.validated_data['bump'] = False

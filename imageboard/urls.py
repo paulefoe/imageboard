@@ -22,6 +22,7 @@ from . import settings
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('board.urls')),
+    url(r'^api/posts/', include('board.api.urls', namespace='post-api')),
 ]
 
 if settings.DEBUG:
