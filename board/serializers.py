@@ -19,6 +19,5 @@ class BlacklistPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         ip_addr = request.META['REMOTE_ADDR']
-        print(obj.published)
         diff = timezone.now() - obj.published
-        return ip_addr == obj.ip and diff.seconds < 120
+        return (ip_addr == obj.ip) and diff.seconds < 120
