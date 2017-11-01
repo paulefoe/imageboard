@@ -3,7 +3,7 @@ from django.db.models import Q
 
 
 class Board(models.Model):
-    code = models.CharField(max_length=5)
+    code = models.CharField(max_length=5, unique=True)
     name = models.CharField(max_length=10)
     description = models.CharField(max_length=50)
 

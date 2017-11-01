@@ -55,7 +55,7 @@
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
-             url: frm.attr('test'),
+             url: frm.attr({% url 'post-api:create' board_code=board_code post=post_id %}),
 {#            url: frm.attr({% url 'test' board_code=board_code post_id=post_id %}),#}
 {#            url: frm.attr('test/{{ board_code }}/{{ post_id }}/'),#}
             data: frm.serialize(),

@@ -16,7 +16,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.routers import Route, DynamicDetailRoute, SimpleRouter
 
 
-
 def index(request):
     boards = Board.objects.all()
     return render(request, 'board/index.html', {'boards': boards})
