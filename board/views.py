@@ -47,45 +47,7 @@ def thread_list(request, board_code):
 
 def thread_detail(request, board_code, post_id):
     post = get_object_or_404(Post, id=post_id)
-    thread = get_object_or_404(Thread, id=post.thread_id)
-    board = get_object_or_404(Board, code=board_code)
     posts = Post.objects.filter(board__code=board_code, thread_id=post.thread_id)[::-1]
-#     lol = serializers.serialize('json', posts)
-#     response = JsonResponse(lol, safe=False)
-    # if request.method == 'POST':
-    #     form = PostForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         new_post = form.save(commit=False)
-    #         new_post.thread = thread
-    #         if (form.cleaned_data['email'] == 'sage') or len(posts) > 500:
-    #             new_post.bump = False
-    #         new_post.ip = request.META.get('REMOTE_ADDR')
-    #         new_post.save()
-    #         new_post.board.add(board)
-    #         new_post.save()
-    #         posts.append(new_post)
-    #         data11 = serializers.serialize('json', posts, fields=('text', 'title', ))
-    #         # my_list = posts.values_list('text', 'title')
-    #         response = JsonResponse(data11, safe=False)
-    #         context = {
-    #             'posts': posts,
-    #         }
-    #         # return JsonResponse({
-    #         #     "detail_html": get_template('board/thread_detail.html').render(context),
-    #         #     'title': new_post.title,
-    #         #     'ip': new_post.ip,
-    #         #     'id': new_post.id,
-    #         #     'text': new_post.text
-    #         # })
-    #         # json_data = json.dumps(list(my_list))
-    #         # return HttpResponse(json_data)
-    #         # return data
-    #
-    #     return redirect('thread_detail', board_code, post_id)
-    #     #     return HttpResponse(data11)
-    #     #     return HttpResponse(json.dumps({'data': data}), content_type='application/json')
-    #
-    # else:
     form = PostForm()
     return render(request, 'board/thread_detail.html', {'posts': posts, 'form': form, 'board_code': board_code,
                                                         'post_id': post_id})
