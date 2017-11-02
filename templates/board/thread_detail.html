@@ -55,11 +55,12 @@
              url: "{% url 'post-api:create' board_code=board_code post=post_id %}",
             data: frm.serialize(),
             success: function (data) {
-                $('#post').append(JSON.parse(JSON.stringify(data.title)));
+                 console.log(data);
+                $('#post').append(data.title);
                 $('#post').append("<br>");
-                $('#post').append(JSON.parse(JSON.stringify(data.id)));
+                $('#post').append(data.id);
                 $('#post').append("<br>");
-                $('#post').append(JSON.parse(JSON.stringify(data.text)));
+                $('#post').append(data.text);
                 $('#post').append("<br><br><br>");
                 frm.trigger("reset");
             },
