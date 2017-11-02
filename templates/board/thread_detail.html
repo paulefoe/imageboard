@@ -29,7 +29,6 @@
                         </a>
 
 
-
                     {% endif %}
                 {% if post.image %}
                         <img src="{{ post.image.url }}">
@@ -40,8 +39,6 @@
     {% endfor %}
     </div>
 
-
-
  <form id="form_post" class="text-center" class="form-post" enctype="multipart/form-data" action="." method="post">
  {{ form|crispy }}
  {% csrf_token %}
@@ -50,20 +47,22 @@
 
 
 
-
 <script type="text/javascript">
     var frm = $('#form_post');
-    var post = $('lol');
     frm.submit(function () {
         $.ajax({
             type: frm.attr('method'),
-             url: frm.attr('thread_detail'),
-{#            url: frm.attr({% url 'thread_detail' board_code=board_code post_id=post_id %}),#}
+             url: "{% url 'post-api:create' board_code=board_code post=post_id %}",
             data: frm.serialize(),
             success: function (data) {
-                console.log(post);
-                $("#post").html(data);
-
+                 console.log(data);
+                $('#post').append(data.title);
+                $('#post').append("<br>");
+                $('#post').append(data.id);
+                $('#post').append("<br>");
+                $('#post').append(data.text);
+                $('#post').append("<br><br><br>");
+                frm.trigger("reset");
             },
             error: function(data) {
                 $("#MESSAGE-DIV").html("Something went wrong!");

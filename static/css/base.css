@@ -5,7 +5,7 @@
 .nav-link {
     color: #C9BE89;
 }
-#post{
+#post, #text, #post_pk, #title{
     background-color: #2C2C2C;
     color: #698CC0;
 }
