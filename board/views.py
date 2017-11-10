@@ -1,19 +1,8 @@
-from django.shortcuts import render, get_object_or_404, HttpResponse, redirect, Http404
-from .models import Post, Thread, Board
-import json
-import datetime
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status, viewsets
-from rest_framework.decorators import detail_route, list_route
-from django.core import serializers
-from django.template.loader import get_template
-from django.http import JsonResponse
-from .forms import PostForm, OpForm
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .serializers import PostSerializer, BlacklistPermission
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.routers import Route, DynamicDetailRoute, SimpleRouter
+
+from .models import Post, Thread, Board
+from .forms import PostForm, OpForm
 
 
 def index(request):
@@ -83,75 +72,3 @@ def delete_post(request, board_code, post_id):
             post.delete()
             return redirect('thread_detail', board_code, thread.open_post().id)
 
-
-class PostList(APIView):
-
-    def get(self, request, format=None):
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class PostDetail(APIView):
-    permission_classes = [BlacklistPermission, IsAuthenticatedOrReadOnly]
-
-    def get_object(self, pk):
-        try:
-            return Post.objects.get(pk=pk)
-        except Post.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-
-        post = self.get_object(pk)
-        # diff = post.published - datetime.datetime.now()
-        if self.check_object_permissions(request, post):
-            serializer = PostSerializer(post, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-
-    def delete(self, request, pk, format=None):
-        post = self.get_object(pk)
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-    @detail_route(methods=['post'], url_name='add_post')
-    def add_post(self, request, board_code, post_id):
-        op_post = get_object_or_404(Post, id=post_id)
-        thread = get_object_or_404(Thread, id=op_post.thread_id)
-        board = get_object_or_404(Board, code=board_code)
-        posts = Post.objects.filter(board__code=board_code, thread_id=op_post.thread_id)[::-1]
-        serializer = PostSerializer(data=request.data)
-        serializer.data['thread'] = thread.id
-        serializer.data['board'] = [board.id]
-        serializer.data['ip'] = request.META.get('REMOTE_ADDR')
-        if serializer.is_valid():
-            if (serializer.validate_data['email'] == 'sage') or len(posts) > 500:
-                serializer.validated_data['bump'] = False
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
-    # @list_route(methods=['get'], url_name='detail_thread')
-    # def detail_thread(self, request, board_code, post_id):
-    #     post = get_object_or_404(Post, id=post_id)
-    #     posts = Post.objects.filter(board__code=board_code, thread_id=post.thread_id)[::-1]
-    #     serializer = self.get_serializer(posts, many=True)
-    #     return Response(serializer.data)

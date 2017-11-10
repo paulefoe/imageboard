@@ -7,7 +7,7 @@ from rest_framework import mixins
 
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, DestroyAPIView, CreateAPIView
-from .serializers import  PostCreateSerializer
+from .serializers import PostCreateSerializer
 from .permissions import BlacklistPermission
 
 
